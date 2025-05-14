@@ -1,0 +1,42 @@
+# s3: auto upload to s3 bucket configuration
+s3:
+  bucket: "..."
+  endpoint: "..."
+  access_key: "..."
+  secret_key: "..."
+  region: "..."
+
+# encryption: auto encrypt the backup file
+encryption:
+  enabled: true
+  key: "J/Kv1k28NwNQmuDTgOxfedvsJ8Vq6dLcU9+Igo8bxQM="
+
+# upload: auto upload to s3
+upload:
+  enabled: true
+
+# log level can be: debug, info, warn, error
+log_level: "info"
+
+# deletion rules for managing backup retention
+deletion_rules:
+  enabled: true
+  # delete backups older than 30 days
+  max_age_days: 7
+  # keep only the 10 most recent backups
+  max_count: 2
+
+# db_configs: auto backup the database
+db_configs:
+  - type: "mysql"
+    container: "backoffice_database"
+    name: "dara_backoffice_db"
+    user: "dara"
+    password: "dara_pass"
+    directory: "~/Desktop/dara-backoffice"
+  - type: "mysql"
+    container: "wallet_database"
+    name: "dara_wallet_db"
+    user: "dara"
+    password: "dara_pass"
+    directory: "~/Desktop/dara-wallet"
