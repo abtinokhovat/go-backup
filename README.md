@@ -85,6 +85,33 @@ The backup agent provides several make commands for managing the service and its
 
 The backup agent is configured using a YAML file located at `/etc/go-backup/config.yaml`. The configuration file is copied during installation, but you can modify it at any time.
 
+### Encryption
+
+The backup agent supports AES-256-GCM encryption for your backups. To enable encryption:
+
+1. Generate a secure encryption key:
+
+```bash
+# Generate a random 32-byte key and encode it in base64
+openssl rand -base64 32
+```
+
+2. Add the generated key to your configuration:
+
+```yaml
+encryption:
+  enabled: true
+  key: "your-generated-base64-key-here" # The key generated in step 1
+```
+
+Important security notes:
+
+- Keep your encryption key secure and never share it
+- Store a backup of your encryption key in a secure location
+- If you lose the encryption key, you won't be able to decrypt your backups
+- The key must be exactly 32 bytes when decoded from base64
+- The key is used for AES-256-GCM encryption, which provides both confidentiality and authenticity
+
 Example configuration structure:
 
 ```yaml

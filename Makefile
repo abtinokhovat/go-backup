@@ -18,8 +18,8 @@ install: build
 	@echo "Installing $(SERVICE_NAME)..."
 	@sudo mkdir -p $(INSTALL_DIR)
 	@sudo cp $(BUILD_DIR)/$(BINARY_NAME) $(INSTALL_DIR)/
-	@sudo cp dara-backup.sh $(INSTALL_DIR)/
-	@sudo chmod +x $(INSTALL_DIR)/dara-backup.sh
+	@sudo cp go-backup.sh $(INSTALL_DIR)/
+	@sudo chmod +x $(INSTALL_DIR)/go-backup.sh
 	@sudo cp $(SERVICE_NAME).service $(SERVICE_DIR)/
 	@sudo cp $(SERVICE_NAME).timer $(SERVICE_DIR)/
 	@sudo mkdir -p $(CONFIG_DIR)
