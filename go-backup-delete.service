@@ -1,0 +1,11 @@
+[Unit]
+Description=Go Backup Delete Service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/backup-agent delete
+User=root
+
+[Install]
+WantedBy=multi-user.target 

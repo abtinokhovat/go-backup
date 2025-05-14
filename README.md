@@ -38,6 +38,50 @@ This will:
 make enable
 ```
 
+## Makefile Commands
+
+The backup agent provides several make commands for managing the service and its operations:
+
+### Installation Commands
+
+- `make build` - Build the Go binary
+- `make install` - Install the service, binary, and configuration files
+- `make uninstall` - Remove all installed files and services
+- `make clean` - Clean build artifacts
+
+### Service Management Commands
+
+- `make start` - Start the backup service
+- `make stop` - Stop the backup service
+- `make restart` - Restart the backup service
+- `make status` - Check the current status of the service
+- `make enable` - Enable and start the service (starts automatically on boot)
+- `make disable` - Disable and stop the service (won't start on boot)
+
+### Backup Commands
+
+- `make backup` - Trigger a manual backup
+- `make schedule` - View current backup schedule
+- `make delete` - Manually trigger deletion of old backups
+
+### Deletion Service Commands
+
+- `make enable-deletion` - Enable and start the deletion service
+- `make disable-deletion` - Disable and stop the deletion service
+- `make start-deletion` - Start the deletion service
+- `make stop-deletion` - Stop the deletion service
+- `make restart-deletion` - Restart the deletion service
+- `make status-deletion` - Check the status of the deletion service
+- `make deletion-schedule` - View current deletion schedule
+
+### Development Commands
+
+- `make test` - Run all tests
+- `make lint` - Run linters
+- `make fmt` - Format Go code
+- `make vet` - Run Go vet
+- `make deps` - Install dependencies
+
 ## Configuration
 
 The backup agent is configured using a YAML file located at `/etc/go-backup/config.yaml`. The configuration file is copied during installation, but you can modify it at any time.
@@ -63,6 +107,7 @@ The backup agent provides several make commands for easy service management:
 - `make stop` - Stop the backup service
 - `make status` - Check the current status of the service
 - `make restart` - Restart the backup service
+- `make delete` - Delete old backups based on retention policy
 
 ### Service Lifecycle
 
@@ -74,6 +119,46 @@ The backup agent provides several make commands for easy service management:
 - `make schedule` - View current schedule and available scheduling options
 
 The service runs as a systemd timer, which provides flexible scheduling options. By default, it runs daily at 12:00.
+
+### Deletion Scheduling
+
+The backup agent includes a separate timer for automated deletion of old backups. This ensures that your backup storage doesn't grow indefinitely.
+
+#### Deletion Timer Setup
+
+1. Enable the deletion timer:
+
+```bash
+make enable-deletion
+```
+
+2. View deletion schedule:
+
+```bash
+make deletion-schedule
+```
+
+3. Modify deletion schedule:
+   - Edit the timer file: `/etc/systemd/system/go-backup-deletion.timer`
+   - Reload and restart the service:
+
+```bash
+sudo systemctl daemon-reload
+make restart-deletion
+```
+
+#### Deletion Timer Details
+
+- The deletion service runs as a separate systemd timer (`go-backup-deletion.timer`)
+- By default, it runs weekly on Sunday at 01:00
+- The deletion process respects the retention policy defined in your configuration
+- Logs can be viewed using: `journalctl -u go-backup-deletion.service`
+
+#### Available Deletion Schedule Formats
+
+- Weekly (Sunday at 1 AM): `OnCalendar=weekly 01:00:00`
+- Monthly (1st of month): `OnCalendar=*-*-01 01:00:00`
+- Custom interval: `OnCalendar=Mon *-*-* 01:00:00`
 
 ### Available Schedule Formats
 
