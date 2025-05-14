@@ -44,10 +44,11 @@ The backup agent provides several make commands for managing the service and its
 
 ### Installation Commands
 
-- `make build` - Build the Go binary
+- `make build` - Build the Go binary (outputs to `build/` directory)
 - `make install` - Install the service, binary, and configuration files
 - `make uninstall` - Remove all installed files and services
-- `make clean` - Clean build artifacts
+- `make install-delete-timer` - Install the deletion timer service
+- `make uninstall-delete-timer` - Remove the deletion timer service
 
 ### Service Management Commands
 
@@ -58,21 +59,19 @@ The backup agent provides several make commands for managing the service and its
 - `make enable` - Enable and start the service (starts automatically on boot)
 - `make disable` - Disable and stop the service (won't start on boot)
 
-### Backup Commands
+### Scheduling Commands
 
-- `make backup` - Trigger a manual backup
-- `make schedule` - View current backup schedule
-- `make delete` - Manually trigger deletion of old backups
+- `make schedule` - View current backup schedule and available scheduling options
+- `make delete-schedule` - Delete the current backup schedule
 
-### Deletion Service Commands
+### Deletion Timer Commands
 
-- `make enable-deletion` - Enable and start the deletion service
-- `make disable-deletion` - Disable and stop the deletion service
-- `make start-deletion` - Start the deletion service
-- `make stop-deletion` - Stop the deletion service
-- `make restart-deletion` - Restart the deletion service
-- `make status-deletion` - Check the status of the deletion service
-- `make deletion-schedule` - View current deletion schedule
+- `make start-delete` - Start the deletion timer
+- `make stop-delete` - Stop the deletion timer
+- `make restart-delete` - Restart the deletion timer
+- `make status-delete` - Check the status of the deletion timer
+- `make enable-delete` - Enable and start the deletion timer
+- `make disable-delete` - Disable and stop the deletion timer
 
 ### Development Commands
 
@@ -107,7 +106,6 @@ The backup agent provides several make commands for easy service management:
 - `make stop` - Stop the backup service
 - `make status` - Check the current status of the service
 - `make restart` - Restart the backup service
-- `make delete` - Delete old backups based on retention policy
 
 ### Service Lifecycle
 
@@ -117,65 +115,35 @@ The backup agent provides several make commands for easy service management:
 ### Scheduling
 
 - `make schedule` - View current schedule and available scheduling options
+- `make delete-schedule` - Delete the current backup schedule
 
 The service runs as a systemd timer, which provides flexible scheduling options. By default, it runs daily at 12:00.
 
-### Deletion Scheduling
+### Deletion Timer Setup
 
-The backup agent includes a separate timer for automated deletion of old backups. This ensures that your backup storage doesn't grow indefinitely.
-
-#### Deletion Timer Setup
-
-1. Enable the deletion timer:
+1. Install the deletion timer:
 
 ```bash
-make enable-deletion
+make install-delete-timer
 ```
 
-2. View deletion schedule:
+2. Enable the deletion timer:
 
 ```bash
-make deletion-schedule
+make enable-delete
 ```
 
-3. Modify deletion schedule:
-   - Edit the timer file: `/etc/systemd/system/go-backup-deletion.timer`
-   - Reload and restart the service:
+3. View deletion timer status:
 
 ```bash
-sudo systemctl daemon-reload
-make restart-deletion
+make status-delete
 ```
 
-#### Deletion Timer Details
-
-- The deletion service runs as a separate systemd timer (`go-backup-deletion.timer`)
-- By default, it runs weekly on Sunday at 01:00
-- The deletion process respects the retention policy defined in your configuration
-- Logs can be viewed using: `journalctl -u go-backup-deletion.service`
-
-#### Available Deletion Schedule Formats
-
-- Weekly (Sunday at 1 AM): `OnCalendar=weekly 01:00:00`
-- Monthly (1st of month): `OnCalendar=*-*-01 01:00:00`
-- Custom interval: `OnCalendar=Mon *-*-* 01:00:00`
-
-### Available Schedule Formats
-
-- Daily at midnight: `OnCalendar=daily`
-- Every hour: `OnCalendar=hourly`
-- Weekly (Sunday at midnight): `OnCalendar=weekly`
-- Daily at specific time: `OnCalendar=*-*-* 12:00:00`
-- Weekly on specific day: `OnCalendar=Mon *-*-* 12:00:00`
-
-To modify the schedule:
-
-1. Edit the timer file: `/etc/systemd/system/go-backup.timer`
-2. Reload and restart the service:
+4. To stop or disable the deletion timer:
 
 ```bash
-sudo systemctl daemon-reload
-make restart
+make stop-delete    # Stop the timer
+make disable-delete # Disable and stop the timer
 ```
 
 ## Uninstallation
